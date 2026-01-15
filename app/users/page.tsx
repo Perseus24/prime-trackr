@@ -1,16 +1,10 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import Header from "./components/header";
+import Header from "../components/header";
 
 export default function Home() {
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-    const [time, setTime] = useState(new Date());
-
-    useEffect(() => {
-        const timer = setInterval(() => setTime(new Date()), 1000);
-        return () => clearInterval(timer);
-    }, []);
     
     useEffect(() => {
         const handleMouseMove = (e: { clientX: any; clientY: any; }) => {
@@ -33,8 +27,9 @@ export default function Home() {
                 }}
             ></div>
 
-            <p>login page here</p>
+            {/* top bar */}
+            <Header />
+            <p>users tab</p>
         </div>
     );
 }
-

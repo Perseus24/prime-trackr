@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from "react";
-import Header from "./components/header";
+import Header from "../components/header";
 
 export default function Home() {
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
@@ -33,7 +33,22 @@ export default function Home() {
                 }}
             ></div>
 
-            <p>login page here</p>
+            {/* top bar */}
+            <Header />
+
+            <div className="flex flex-col gap-8 px-8">
+                <div className="grid grid-cols-3 mt-32 w-full">
+                    <div className="flex flex-col gap-3">
+                        <p>to-do</p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        <p>in-progress</p>
+                    </div>
+                    <div className="flex flex-col gap-3">
+                        <p>completed</p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
