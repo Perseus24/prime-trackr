@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/avatar"
 import { createProject } from "./actions";
 import { SquareKanban } from "lucide-react";
+import Link from 'next/link'
 
 export default function ClientHome({ projects, user }: { projects: any, user: any}) {
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
@@ -94,7 +95,14 @@ export default function ClientHome({ projects, user }: { projects: any, user: an
                                                             })}</p>
                                                     </div>
                                                 </div>
-                                                
+                                            </div>
+                                            <div className="p-3 flex justify-end gap-5 text-xs border-t-2 border-neutral-300">
+                                                <Link 
+                                                    href={`/project/${project.id}`} 
+                                                    className="bg-black text-white py-2 px-4 rounded-md cursor-pointer text-sm"
+                                                    >
+                                                    open
+                                                </Link>
                                             </div>
                                         </div>
                                     ))
