@@ -30,6 +30,15 @@ import {
     ContextMenuTrigger,
 } from "@/components/ui/context-menu"
 import { createNewTask, moveTask } from "./actions";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 
 export default function ClientPage({ user, projectData, tasks }: { user: any, projectData: any, tasks: any }) {
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
@@ -47,6 +56,10 @@ export default function ClientPage({ user, projectData, tasks }: { user: any, pr
         window.addEventListener('mousemove', handleMouseMove);
         return () => window.removeEventListener('mousemove', handleMouseMove);
     }, []);
+
+    const priorityTagStyle = (priority: string) => {
+        
+    }
 
     return (
         <div className="min-h-screen bg-neutral-50 text-neutral-900 font-mono text-sm">
@@ -95,6 +108,21 @@ export default function ClientPage({ user, projectData, tasks }: { user: any, pr
                                                         className="p-2 border border-gray-300 rounded-sm" 
                                                         name="description" />
                                                 </div>
+                                                <div className="flex flex-col gap-2 mt-2">
+                                                    <label htmlFor="priority">priority</label>
+                                                    <Select name="priority">
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select a priority" />
+                                                        </SelectTrigger>
+                                                        <SelectContent className="font-mono">
+                                                            <SelectGroup>
+                                                                <SelectItem value="high">High</SelectItem>
+                                                                <SelectItem value="medium">Medium</SelectItem>
+                                                                <SelectItem value="low">Low</SelectItem>
+                                                            </SelectGroup>
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
                                             </div>
                                             <DialogFooter>
                                                 <DialogClose asChild>
@@ -109,9 +137,9 @@ export default function ClientPage({ user, projectData, tasks }: { user: any, pr
                             {
                                 tasks.filter((task: any) => task.status === "to-do").map((task: any) => (
                                     <ContextMenu  key={task.id} >
-                                        <ContextMenuTrigger className="rounded-lg bg-white flex flex-col gap-3 p-2 mt-5">
+                                        <ContextMenuTrigger className="rounded-lg bg-white flex flex-col gap-3 p-3 mt-5">
                                             <div className="flex flex-wrap gap-2">
-                                                <div className="rounded-sm py-1 px-1.5 text-red-600 bg-red-200 text-xs">high</div>
+                                                <div className="rounded-sm py-1 px-1.5 text-red-600 bg-red-200 text-xs">{task.priority}</div>
                                             </div>
                                             <p className="font-semibold">{task.title}</p>
                                             <p className="text-sm">{task.description}</p>

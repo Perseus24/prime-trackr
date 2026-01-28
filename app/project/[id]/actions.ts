@@ -9,6 +9,7 @@ export async function createNewTask(formData: FormData){
     const projectId = formData.get('projectId');
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
+    const priority = formData.get('priority') as string;
 
     const { data: { user } } = await supabase.auth.getUser()
     const { data: userTable } = await supabase.from('user')
@@ -23,6 +24,7 @@ export async function createNewTask(formData: FormData){
                 title: title,
                 description: description,
                 author_id: userTable?.id,
+                priority: priority,
                 project_id: projectId,
                 status: 'to-do'
             }
