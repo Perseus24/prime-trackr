@@ -22,17 +22,15 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar"
 import { createProject } from "./actions";
-import { SquareKanban } from "lucide-react";
+import { Loader, SquareKanban } from "lucide-react";
 import Link from 'next/link'
+import AddProject from "../components/addProject";
 
 export default function ClientHome({ projects, user }: { projects: any, user: any}) {
     const [cursorPos, setCursorPos] = useState({ x: 0, y: 0 });
-    const [time, setTime] = useState(new Date());
+    const [openProjectId, setOpenProjectId] = useState(null)
 
-    useEffect(() => {
-        const timer = setInterval(() => setTime(new Date()), 1000);
-        return () => clearInterval(timer);
-    }, []);
+    
     
     useEffect(() => {
         const handleMouseMove = (e: { clientX: any; clientY: any; }) => {
@@ -61,106 +59,74 @@ export default function ClientHome({ projects, user }: { projects: any, user: an
                 {
                     projects && projects.length > 0 ? (
                         <div className="min-h-screen h-full w-full flex flex-col gap-6 p-8">
-                            <div className="grid grid-cols-4 mt-24">
-                                {
-                                    projects.map((project: any) => (
-                                        <div key={project.id} className="bg-neutral-200 rounded-lg flex flex-col">
-                                            <div className="flex justify-between items-center py-3 px-3 text-black border-b-2 border-neutral-300">
-                                                <div className="flex gap-5 items-center">
-                                                    <div className="flex justify-center items-center h-8 w-8 rounded-full bg-black text-white">
-                                                        <SquareKanban className="h-4 w-4" />
-                                                    </div>
-                                                    <p>{project.title}</p>
-                                                </div>
-                                            </div>
-                                            <div className="p-5 flex gap-5 text-xs w-full overflow-hidden">
-                                                <div className="flex-1 flex-col gap-4 ">
-                                                    <p className="font-medium text-gray-600">Author</p>
-                                                    <div className="flex gap-3 mt-3 items-center">
-                                                        <Avatar>
-                                                            <AvatarImage
-                                                                src="https://github.com/evilrabbit.png"
-                                                                alt="@evilrabbit"
-                                                                />
-                                                                <AvatarFallback>ER</AvatarFallback>
-                                                        </Avatar>
-                                                        <p className="text-wrap overflow-hidden">{user.name}</p>
-                                                    </div>
-                                                    <div className="flex flex-col gap-3 mt-6">
-                                                        <p className="font-medium text-gray-600">Created at</p>
-                                                        <p>{new Date(project.created_at).toLocaleDateString('en-US', {
-                                                            month: 'long',
-                                                            day: 'numeric',
-                                                            year: 'numeric',
-                                                            })}</p>
+                            <div className="flex flex-col mt-24 gap-6">
+                                <AddProject />
+                                <div className="grid grid-cols-4 gap-6">
+                                    {
+                                        projects.map((project: any) => (
+                                            <div key={project.id} className="bg-neutral-200 rounded-lg flex flex-col">
+                                                <div className="flex justify-between items-center py-3 px-3 text-black border-b-2 border-neutral-300">
+                                                    <div className="flex gap-5 items-center">
+                                                        <div className="flex justify-center items-center h-8 w-8 rounded-full bg-black text-white">
+                                                            <SquareKanban className="h-4 w-4" />
+                                                        </div>
+                                                        <p>{project.title}</p>
                                                     </div>
                                                 </div>
+                                                <div className="p-5 flex gap-5 text-xs w-full overflow-hidden">
+                                                    <div className="flex-1 flex-col gap-4 ">
+                                                        <p className="font-medium text-gray-600">Author</p>
+                                                        <div className="flex gap-3 mt-3 items-center">
+                                                            <Avatar>
+                                                                <AvatarImage
+                                                                    src="https://github.com/evilrabbit.png"
+                                                                    alt="@evilrabbit"
+                                                                    />
+                                                                    <AvatarFallback>ER</AvatarFallback>
+                                                            </Avatar>
+                                                            <p className="text-wrap overflow-hidden">{user.name}</p>
+                                                        </div>
+                                                        <div className="flex flex-col gap-3 mt-6">
+                                                            <p className="font-medium text-gray-600">Created at</p>
+                                                            <p>{new Date(project.created_at).toLocaleDateString('en-US', {
+                                                                month: 'long',
+                                                                day: 'numeric',
+                                                                year: 'numeric',
+                                                                })}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="p-3 flex justify-end gap-5 text-xs border-t-2 border-neutral-300">
+                                                    <Link 
+                                                        onClick={() => {
+                                                            setOpenProjectId(project.id)
+                                                        }}
+                                                        href={`/project/${project.id}`} 
+                                                        className={`bg-black text-white py-2 px-4 rounded-md flex items-center gap-3 
+                                                            cursor-pointer text-sm ${openProjectId === project.id ? 'pointer-events-none opacity-50' : ''}`}
+                                                        >
+                                                        {
+                                                            openProjectId === project.id && (
+                                                                <Loader  className="h-4 w-4 animate-spin" />
+                                                            )
+                                                        }
+                                                        open
+                                                    </Link>
+                                                </div>
                                             </div>
-                                            <div className="p-3 flex justify-end gap-5 text-xs border-t-2 border-neutral-300">
-                                                <Link 
-                                                    href={`/project/${project.id}`} 
-                                                    className="bg-black text-white py-2 px-4 rounded-md cursor-pointer text-sm"
-                                                    >
-                                                    open
-                                                </Link>
-                                            </div>
-                                        </div>
-                                    ))
-                                }
+                                        ))
+                                    }
+                                </div>
                             </div>
                         </div>
                     ) : (
                         <div className="min-h-screen h-full w-full flex flex-col gap-6 justify-center items-center">
                             <p>No projects yet</p>
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button className="cursor-pointer">create project</Button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-106.25 font-mono">
-                                    <form action={createProject}>
-                                        <DialogHeader>
-                                            <DialogTitle>Create project</DialogTitle>
-                                        </DialogHeader>
-                                        <div className="flex flex-col gap-4 text-sm text-neutral-600 mt-3 mb-6">
-                                            <div className="flex flex-col gap-2 mt-2">
-                                                <label htmlFor="title">project title</label>
-                                                <input type="text" id="title" className="p-2 border border-gray-300 rounded-sm" name="title" />
-                                            </div>
-                                            <div className="flex flex-col gap-2 mt-2">
-                                                <label htmlFor="description">project description</label>
-                                                <textarea 
-                                                    rows={4}
-                                                    id="description" 
-                                                    className="p-2 border border-gray-300 rounded-sm" 
-                                                    name="description" />
-                                            </div>
-                                        </div>
-                                        <DialogFooter>
-                                            <DialogClose asChild>
-                                            <Button variant="outline">cancel</Button>
-                                            </DialogClose>
-                                            <Button type="submit">create</Button>
-                                        </DialogFooter>
-                                    </form>
-                                </DialogContent>
-                            </Dialog>
+                            <AddProject />
                         </div>
                     )
                 }
             </div>
-            {/* // <div className="flex flex-col gap-8 px-8">
-            //     <div className="grid grid-cols-3 mt-32 w-full">
-            //         <div className="flex flex-col gap-3">
-            //             <p>to-do</p>
-            //         </div>
-            //         <div className="flex flex-col gap-3">
-            //             <p>in-progress</p>
-            //         </div>
-            //         <div className="flex flex-col gap-3">
-            //             <p>completed</p>
-            //         </div>
-            //     </div>
-            // </div> */}
         </div>
     );
 }

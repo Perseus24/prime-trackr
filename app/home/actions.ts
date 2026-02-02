@@ -2,13 +2,38 @@
 import { createClient } from '@/app/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { CreateProjectSchema } from './schema'
 
-export async function createProject(formData: FormData){
+type State = {
+    errors?: {
+        title?: string;
+        description?: string;
+    }
+    message?: string
+} | null
+
+export async function createProject(prevState: State, formData: FormData): Promise<State> {
     const supabase = await createClient();
     
     const title = formData.get('title') as string;
     const description = formData.get('description') as string;
+    
+    const validatedFields = CreateProjectSchema.safeParse({
+        title: title,
+        description: description,
+    })
 
+    if (!validatedFields.success) {
+        const fieldErrors = validatedFields.error.flatten().fieldErrors;
+        return {
+            errors: {
+                title: fieldErrors.title?.[0],
+                description: fieldErrors.description?.[0],
+            },
+            message: "Failed to create project"
+        };
+    }
+    
     const { data: { user } } = await supabase.auth.getUser()
     const { data: userTable } = await supabase.from('user')
         .select('*')
@@ -26,7 +51,13 @@ export async function createProject(formData: FormData){
         ])
 
     if (error) {
-        console.error('Error creating project:', error);
+        return {
+            errors: {
+                title: error.message,
+                description: error.message,
+            },
+            message: "Failed to create project"
+        }
     }
 
     revalidatePath('/home')
