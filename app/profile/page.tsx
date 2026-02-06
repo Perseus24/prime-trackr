@@ -1,5 +1,5 @@
 import { createClient } from "../lib/supabase/server";
-import ClientHome from './clientHome'
+import ClientPage from './clientPage'
 
 export default async function Home() {
     const supabase = await createClient();
@@ -39,7 +39,7 @@ export default async function Home() {
 
 
     return (
-        <ClientHome projects={projects} user={userTable} tasks={tasks}/>
+        <ClientPage user={userTable}/>
     )
 }
 

@@ -41,7 +41,7 @@ export async function createProject(prevState: State, formData: FormData): Promi
         .single();
 
 
-    const { error } = await supabase.from('project')
+    const { data: projectData, error } = await supabase.from('project')
         .insert([
             {
                 title: title,
@@ -49,6 +49,9 @@ export async function createProject(prevState: State, formData: FormData): Promi
                 author_id: userTable?.id
             }
         ])
+        .select()
+        .single();
+
 
     if (error) {
         return {
@@ -60,6 +63,22 @@ export async function createProject(prevState: State, formData: FormData): Promi
         }
     }
 
+    // add log entry
+    const { error: logError } = await supabase.from('log')
+        .insert([
+            {
+                action: 'created',
+                entity_type: 'project',
+                user_id: userTable?.id,
+                project_id: projectData.id,
+                description:`${userTable.name} created project '${projectData.title}'`
+            }
+        ])
+
+    if (logError) {
+        console.error('Error creating log entry:', logError);
+    }
+    
     revalidatePath('/home')
     redirect('/home')
 }
