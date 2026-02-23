@@ -117,7 +117,7 @@ export async function moveTask(prevStatus: string, newStatus: string, taskId: nu
     }
 
     // add log entry
-    const { error: logError } = await supabase.from('log')
+    const { data: logData, error: logError } = await supabase.from('log')
         .insert([
             {
                 action: 'updated',
